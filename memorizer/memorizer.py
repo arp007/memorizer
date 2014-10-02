@@ -5,7 +5,7 @@ import urllib
 from google.appengine.api import users
 from google.appengine.ext import blobstore
 from google.appengine.ext.webapp import blobstore_handlers
-from models import Receipt, Images
+from models import Receipt
 from google.appengine.ext import ndb
 import webapp2
 import jinja2
@@ -22,8 +22,16 @@ JINJA_ENVIRONMENT = jinja2.Environment(
 from util import datetimeformat
 JINJA_ENVIRONMENT.filters['date'] = datetimeformat
 
+class BaseRequestHandler(webapp2.RequestHandler):
+	
 
-class MainPage(webapp2.RequestHandler):
+	def renderTemplate(self, template_location):
+		template = JINJA_ENVIRONMENT.get_template(template_location)
+		return template
+
+
+
+class MainPage(BaseRequestHandler):
 	def get(self):
 		
 		#check for the active google account session
@@ -34,38 +42,11 @@ class MainPage(webapp2.RequestHandler):
 			    'name' : user.nickname(),
 			    'upload_url' : upload_url
 			    }
-			template = JINJA_ENVIRONMENT.get_template('templates/index.html')
+			template = self.renderTemplate('templates/index.html')
 			self.response.write(template.render(template_values))
 		else:
 			self.redirect(users.create_login_url(self.request.uri))
 
-class FileUploadHandler(webapp2.RequestHandler):
-
-	def post(self):
-
-		user = users.get_current_user()
-		if user:
-			
-			file_upload = self.request.POST.get("file", None)
-			file_name = file_upload.filename
-			logging.info(file_name)
-			receipt = Receipt()
-			receipt.store = self.request.get('store')
-			receipt.usr = user
-			receipt.picture = Images(filename = file_name, blob = file_upload.file.read()).put()
-			receipt.put()
-			t = {"image" : '/serve/%s'%receipt.picture.id()}
-			self.response.write(JINJA_ENVIRONMENT.get_template('templates/submit_success.html').render(t))
-		else:
-			self.redirect(users.create_login_url(self.request.uri))
-
-class ServeHandler(webapp2.RequestHandler):
-	def get(self, _id):
-		logging.info(_id)
-		image = Images.get_by_id(int(_id))
-		logging.info(image.filename)
-		self.response.headers[b'Content-Type'] = mimetypes.guess_type(image.filename)[0]
-		self.response.write(image.blob)
 
 class Info(webapp2.RequestHandler):
 	def get(self):
@@ -88,7 +69,7 @@ class UploadFileToDriveHandler(webapp2.RequestHandler):
 				insert_permission(file.get('id'), 'rajanishpoudel@gmail.com','user','reader')
 				receipt = Receipt()
 				receipt.desc = self.request.get('desc')
-				receipt.tags = self.request.get('tags')
+				receipt.tags = self.request.get('tags').split()
 				receipt.usr = user
 				receipt.picture_dlink = file.get('id')
 				receipt.put()
@@ -118,18 +99,10 @@ class ListReceipt(webapp2.RequestHandler):
 			self.redirect(users.create_login_url(self.request.uri))
 
 
-
-
-		
-
-
-		
-
 application = webapp2.WSGIApplication(
 	[
 	('/', MainPage),
-	('/upload', UploadFileToDriveHandler),#FileUploadHandler),
-	('/serve/([^/]+)?', ServeHandler),
+	('/upload', UploadFileToDriveHandler),
 	('/servefile/([^/]+)?', ServeFileFromDrive),
 	('/info', Info),
 	('/list', ListReceipt)

@@ -16,4 +16,4 @@ libraries:
 
 handlers:
 - url: /.*
-  script: savemyreceipt.application
+  script: memorizer.application
