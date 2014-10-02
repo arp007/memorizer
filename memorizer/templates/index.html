@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+{% autoescape true %}
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="container">
+            <div class="row" style="text-align:right;">    
+    	        <label>Welcome!! <label><small>{{ name }}</small>
+            </div>
+    	    <br />
+        	    <form name="form1" class="form-horizontal" action="{{ upload_url }}" enctype="multipart/form-data" method="POST">
+                    <fieldset>
+                        <legend>Upload file </legend>
+                	    <div class="control-group">
+                	    	<label class="control-label" for="shortdesc"> Short Description </label>
+                            <div class="controls">
+                	    	   <input type="text" name="desc" placeholder="short description here" value="" required>
+                            </div>
+                	    </div>
+                	    <div class="control-group">
+                            <label class="control-label" for="shortdesc"> Tags </label>
+                            <div class="controls">
+                               <input type="text" name="tags" placeholder="#tags #tags" value="" required>
+                            </div>
+                	    </div>
+                        <br />
+                	    <div class="control-group">
+                            <input type="file" name="file" placeholder="select" required>
+                        </div>
+                        <br />
+                	    <div class="form-actions">
+                	    	<button type="submit" class="btn btn-primary" > Submit </button>
+                	    </div>
+                    </fieldset>
+        	    </form>
+            </div>
+        </div>
+    </body>
+</html>
+{% endautoescape %}

@@ -1,0 +1,20 @@
+<div>
+	<table style="text-align:left;">
+		<thead>
+			<tr>
+				<th>Store name</th>
+				<th>Date</th>
+				<th>Receipt copy </th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for receipt in receipts %}
+			<tr>
+				<td> {{ receipt.store }} </td>
+				<td> {{ receipt.date | date }} </td>
+				<td><a href="/servefile/{{ receipt.picture_dlink }}">receipt</a></td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
