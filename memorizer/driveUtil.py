@@ -48,21 +48,29 @@ def downloadFile(drive_file):
 			logging.error('An error occured: %s'% resp)
 			return None
 
-
-
-
 def insert_permission(file_id, value, perm_type, role):
 	new_permission = {
 		'value': value,
 		'type' : perm_type,
 		'role' : role
-	}
+	}	
 	try:
 		perm =  getDriveServices().permissions().insert(
 			fileId = file_id, body= new_permission).execute()
-		print "perm is "
-		print perm
+		logging.info(perm)
 	except errors.HttpError, error:
-		print 'An error occured: %s'% error
+		logging.error('An error occured: %s'% error)
 		return None
+
+def deleteDriveFile(file_id):
+	try:
+		resp = getDriveServices().delete(fileId=file_id).execute()
+		return resp
+	except errors.HttpError, error:
+		logging.error('An error occured: %s'% error)
+		return None
+
+
+
+
 

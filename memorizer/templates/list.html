@@ -1,20 +1,20 @@
-<div>
-	<table style="text-align:left;">
-		<thead>
-			<tr>
-				<th>Store name</th>
-				<th>Date</th>
-				<th>Receipt copy </th>
-			</tr>
-		</thead>
-		<tbody>
-			{% for receipt in receipts %}
-			<tr>
-				<td> {{ receipt.store }} </td>
-				<td> {{ receipt.date | date }} </td>
-				<td><a href="/servefile/{{ receipt.picture_dlink }}">receipt</a></td>
-			</tr>
-			{% endfor %}
-		</tbody>
-	</table>
-</div>
+{% extends 'templates/base.html' %}
+{% block content %}
+<form class="navbar-form navbar-left" role="search">
+    <div class="form-group">
+	<input type="text" class="form-control" placeholder="Search name or #tags">
+    </div>
+    <button type="submit" class="btn btn-default">Submit</button>
+</form>   
+<ul class="list-group">
+{% for receipt in receipts %}
+<li class="list-group-item">
+    <div class="row" onclick="location.href='/servefile/{{ receipt.picture_dlink }}';" style="cursor: pointer;">
+		<div class="col-md-2"><label>{{ receipt.desc }}</label></div>
+		<div class="col-md-2"><small>{{ receipt.date | date }}</small></div>
+	    </div>
+</li>
+{% endfor %}
+</ul>
+
+{% endblock %}

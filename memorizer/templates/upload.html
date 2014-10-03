@@ -1,0 +1,26 @@
+{% extends 'templates/base.html' %}
+{% block content %}
+  <form name="form1" class="form-horizontal" action="{{ upload_url }}" enctype="multipart/form-data" method="POST">
+                    <fieldset>
+                	    <div class="control-group">
+                	    	<label class="control-label" for="shortdesc"> Short Description </label>
+                            <div class="controls">
+                	    	   <input style="width:200px;" class="form-control" type="text" name="desc" placeholder="short description here" value="" required>
+                            </div>
+                	    </div>
+                	    <div class="control-group">
+                            <label class="control-label" for="shortdesc"> Tags </label>
+                            <div class="controls">
+                               <input type="text" data-role="tagsinput" name="tags" placeholder="tags" value="" required>
+                            </div>
+                	    </div>
+                	    <div class="control-group">
+                            <input type="file" name="file" placeholder="select" required>
+                        </div>
+                        <br />
+                	    <div class="form-actions">
+                	    	<button type="submit" class="btn btn-primary" > Submit </button>
+                	    </div>
+                    </fieldset>
+        	    </form>
+{% endblock %}

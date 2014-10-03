@@ -11,8 +11,9 @@ import webapp2
 import jinja2
 import logging
 import mimetypes
-from driveUtil import insert_file, getFilesList, insert_permission, getFileInfoById, downloadFile
+from driveUtil import insert_file, getFilesList, insert_permission, getFileInfoById, downloadFile, deleteDriveFile
 import cgi
+import json
 
 JINJA_ENVIRONMENT = jinja2.Environment(
 	loader = jinja2.FileSystemLoader(os.path.dirname(__file__)),
@@ -25,10 +26,15 @@ JINJA_ENVIRONMENT.filters['date'] = datetimeformat
 class BaseRequestHandler(webapp2.RequestHandler):
 	
 
-	def renderTemplate(self, template_location):
+	def renderTemplate(self, context, template_location):
+		context['name'] = users.get_current_user().nickname()
 		template = JINJA_ENVIRONMENT.get_template(template_location)
-		return template
+		self.response.write(template.render(context))
 
+	def jsonresponse(self, context):
+		self.response.headers['Content-Type'] = 'application/json'   
+		self.response.out.write(json.dumps(context))
+		
 
 
 class MainPage(BaseRequestHandler):
@@ -39,11 +45,9 @@ class MainPage(BaseRequestHandler):
 		if user:
 			upload_url = "/upload"
 			template_values = {
-			    'name' : user.nickname(),
 			    'upload_url' : upload_url
 			    }
-			template = self.renderTemplate('templates/index.html')
-			self.response.write(template.render(template_values))
+			self.renderTemplate(template_values, 'templates/upload.html')
 		else:
 			self.redirect(users.create_login_url(self.request.uri))
 
@@ -87,14 +91,17 @@ class ServeFileFromDrive(webapp2.RequestHandler):
 		self.response.headers[b'Content-Type'] = mimetypes.guess_type(drive_file.get('title'))[0]
 		self.response.write(file_content)
 
-class ListReceipt(webapp2.RequestHandler):
+class ListReceipt(BaseRequestHandler):
+	
 	def get(self):
 		user = users.get_current_user()
 		if user:
 			list_receipt = Receipt.listReceiptByUsr(user)
-			self.response.write(JINJA_ENVIRONMENT.get_template('templates/list_new.html').render({'receipts' : list_receipt}))
-			
-
+			data = {
+				'receipts' : list_receipt
+			}
+			self.renderTemplate(data, 'templates/list.html')
+			#self.response.write(JINJA_ENVIRONMENT.get_template('templates/list_new.html').render(data))
 		else:
 			self.redirect(users.create_login_url(self.request.uri))
 

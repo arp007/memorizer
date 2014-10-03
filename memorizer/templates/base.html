@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+{% autoescape true %}
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <!-- Optional theme -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/static/bootstrap-tagsinput.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="container">
+                <div class="row" style="text-align:right;">    
+        	        <label>Welcome!! <label><small>{{ name }}</small>
+                </div>
+        	    <br />
+                <legend><a href="/">Upload file |</a> <a href="/list">View files</a></legend>
+                {% block content %}
+                {% endblock %}
+            </div>
+        </div>
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="/static/bootstrap-tagsinput.min.js"></script>
+</html>
+{% endautoescape %}
